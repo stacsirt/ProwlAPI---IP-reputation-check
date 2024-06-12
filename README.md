@@ -1,0 +1,1 @@
+The Prowl API key serves as an analyzer linking to TheHive, facilitating automated IP address checks. By sending IPs to Prowl, it provides ratings and reputation checks, identifying if an IP is associated with malicious activity. Users require an API key to utilize this service efficiently.
