@@ -6,7 +6,7 @@ from cortexutils.analyzer import Analyzer
 class LupovisProwlAnalyzer(Analyzer):
     def __init__(self):
         super().__init__()
-        self.prowl_api_key = 'Enter Your API Key Here'  # Hardcoded Prowl API key
+        self.prowl_api_key = 'Enter Your API Key Here'  
         self.prowl_api_url = 'https://api.prowl.lupovis.io/GetIPReputation?ip='
         self.proxy = 'enter your proxy server here' (if needed)
 
