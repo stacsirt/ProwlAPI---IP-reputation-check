@@ -1,18 +1,36 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import subprocess
+import json
 from cortexutils.analyzer import Analyzer
 
 class LupovisProwlAnalyzer(Analyzer):
     def __init__(self):
         super().__init__()
-        self.prowl_api_key = 'Enter Your API Key Here'  
+        self.prowl_api_key = 'Enter your LupovisProwl API Key'
         self.prowl_api_url = 'https://api.prowl.lupovis.io/GetIPReputation?ip='
-        self.proxy = 'enter your proxy server here' (if needed)
+        self.proxy = 'enter proxy server if required'
 
     def summary(self, raw):
-        # No need for summary in this example
-        return []
+        ttps = raw.get('ttps', [])
+        if ttps:
+            return [
+                {
+                    'level': 'malicious',
+                    'namespace': 'LupovisProwlAnalyzer',
+                    'predicate': 'Threat',
+                    'value': ttps[0] if isinstance(ttps, list) and ttps else 'Unknown threat'
+                }
+            ]
+        else:
+            return [
+                {
+                    'level': 'safe',
+                    'namespace': 'LupovisProwlAnalyzer',
+                    'predicate': 'Threat',
+                    'value': 'No known malicious activity'
+                }
+            ]
 
     def run(self):
         ip = self.get_data()
@@ -28,7 +46,14 @@ class LupovisProwlAnalyzer(Analyzer):
             stdout, stderr = process.communicate()
             if process.returncode == 0:
                 output = stdout.decode()
-                result = {"ip": ip, "details": output}
+                # Parse the JSON output
+                output_json = json.loads(output)
+                # Check if "ttps" field is empty or contains "no known malicious activity"
+                if not output_json.get('ttps'):
+                    details = "no known malicious activity"
+                else:
+                    details = json.dumps(output_json)
+                result = {"ip": ip, "details": details, "ttps": output_json.get('ttps', [])}
                 self.report(result)
             else:
                 self.error(f'curl command failed with error: {stderr.decode()}')
