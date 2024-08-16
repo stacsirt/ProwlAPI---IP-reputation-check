@@ -7,11 +7,16 @@ from cortexutils.analyzer import Analyzer
 class LupovisProwlAnalyzer(Analyzer):
     def __init__(self):
         super().__init__()
-        self.prowl_api_key = 'Enter your LupovisProwl API Key'
+        self.prowl_api_key = 'Enter your API Key'
         self.prowl_api_url = 'https://api.prowl.lupovis.io/GetIPReputation?ip='
-        self.proxy = 'enter proxy server if required'
+        self.proxy = 'Enter your proxy server if required'
 
     def summary(self, raw):
+        """
+        Provides a summary of the analysis results.
+        :param raw: Raw results from the analyzer
+        :return: A list of dictionaries containing summary information
+        """
         ttps = raw.get('ttps', [])
         if ttps:
             return [
@@ -32,11 +37,34 @@ class LupovisProwlAnalyzer(Analyzer):
                 }
             ]
 
+    def build_taxonomy(self, level, namespace, predicate, value):
+        """
+        Constructs a taxonomy entry.
+        :param level: Severity level ('info', 'safe', 'suspicious', 'malicious')
+        :param namespace: Name of analyzer
+        :param predicate: Name of service
+        :param value: Value to report
+        :return: Dictionary representing the taxonomy entry
+        """
+        if level not in ['info', 'safe', 'suspicious', 'malicious']:
+            level = 'info'
+
+        return {
+            'level': level,
+            'namespace': namespace,
+            'predicate': predicate,
+            'value': value
+        }
+
     def run(self):
+        """
+        Runs the analyzer, fetches data, processes it, and reports the result.
+        """
         ip = self.get_data()
         if not ip:
             self.error('No IP provided')
             return
+
         url = f'{self.prowl_api_url}{ip}'
         try:
             # Constructing the curl command
@@ -49,11 +77,13 @@ class LupovisProwlAnalyzer(Analyzer):
                 # Parse the JSON output
                 output_json = json.loads(output)
                 # Check if "ttps" field is empty or contains "no known malicious activity"
-                if not output_json.get('ttps'):
-                    details = "no known malicious activity"
-                else:
-                    details = json.dumps(output_json)
-                result = {"ip": ip, "details": details, "ttps": output_json.get('ttps', [])}
+                details = output_json.get('ttps', 'No known malicious activity')
+                level = 'malicious' if output_json.get('ttps') else 'safe'
+                result = {
+                    "ip": ip,
+                    "details": details,
+                    "taxonomy": self.build_taxonomy(level, 'LupovisProwlAnalyzer', 'Threat', details)
+                }
                 self.report(result)
             else:
                 self.error(f'curl command failed with error: {stderr.decode()}')
