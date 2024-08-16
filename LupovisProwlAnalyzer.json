@@ -2,7 +2,7 @@
   "name": "LupovisProwlAnalyzer",
   "description": "Analyzer for IP reputation using Lupovis Prowl API",
   "author": "Lyle Docherty",
-  "version": "1.0",
+  "version": "1.1",
   "url": "https://api.prowl.lupovis.io",
   "license": "AGPL-V3",
   "dataTypeList": [
