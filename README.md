@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `LupovisProwlAnalyzer` is an analyzer for [TheHive](https://thehive-project.org) that integrates with the [Lupovis Prowl API](https://api.prowl.lupovis.io) to evaluate the reputation of IP addresse>
+The `LupovisProwlAnalyzer` is an analyzer for [TheHive](https://thehive-project.org) that integrates with the [Lupovis Prowl API](https://api.prowl.lupovis.io) to evaluate the reputation of IP addresses
 
 ## Features
 
