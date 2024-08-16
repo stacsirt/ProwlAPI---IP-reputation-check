@@ -20,7 +20,8 @@ The `LupovisProwlAnalyzer` is an analyzer for [TheHive](https://thehive-project.
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/your-repo/LupovisProwlAnalyzer.git
+   git clone https://github.com/stacsirt/ProwlAPI---IP-reputation-check
+   
    cd LupovisProwlAnalyzer
 
 
